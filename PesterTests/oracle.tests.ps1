@@ -1,5 +1,6 @@
 <#
     requires that the predefined account HR is unlocked and has password hr
+    default sys pw is Password
     using oracle 11.2g Express instance
 #>
 InModuleScope SimplySql {
@@ -27,7 +28,7 @@ InModuleScope SimplySql {
         }
 
         It "Positional Binding" {
-            $result = Invoke-SqlQuery "SELECT :a AS First, :b AS Second, :c AS Third FROM dual" -Parameters @{c="Third";a="First";b="Second"}
+            $result = Invoke-SqlQuery 'SELECT :a AS "First", :b AS "Second", :c AS "Third" FROM dual' -Parameters @{c="Third";a="First";b="Second"}
             $result.First | Should -Be "First"
             $result.Second | Should -Be "Second"
             $result.Third | Should -Be "Third"

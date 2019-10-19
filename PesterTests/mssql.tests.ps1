@@ -1,17 +1,18 @@
 InModuleScope SimplySql {
     Describe "MSSQL" {
-        BeforeEach { Open-SqlConnection -DataSource "(localdb)\MSSQLLocalDB" }
+        BeforeEach { Open-SqlConnection -DataSource "localhost\sqlexpress" -Credential ([pscredential]::new("test", (ConvertTo-SecureString -Force -AsPlainText "test")))}
         AfterEach { Show-SqlConnection -all | Close-SqlConnection }
 
         It "Test ConnectionString Switch" {
             {
-                Open-SqlConnection -ConnectionString "Data Source=(localdb)\MSSQLLocalDB" -ConnectionName Test
+                Open-SqlConnection -ConnectionString "Data Source=localhost\sqlexpress" -ConnectionName Test -Credential ([pscredential]::new("test", (ConvertTo-SecureString -Force -AsPlainText "test")))
                 Close-SqlConnection -ConnectionName Test
             } | Should -Not -Throw
         }
         
         It "Create a Test Database" {
-            Invoke-SqlUpdate "Create Database Test" | Should -Be -1
+            Invoke-SqlUpdate "CREATE DATABASE Test; ALTER DATABASE Test SET Auto_Close OFF" | Should -Be -1
+            Set-SqlConnection -Database Test
         }
 
         It "Invoke-SqlScalar" {
@@ -19,6 +20,7 @@ InModuleScope SimplySql {
         }
 
         It "Invoke-SqlQuery (No ResultSet Warning)" {
+            Set-SqlConnection -Database Test
             Invoke-SqlUpdate -Query "CREATE TABLE temp (cola int)"
             $WarningPreference = "stop"
             Try { Invoke-SqlQuery -Query "INSERT INTO temp VALUES (1)" }
@@ -62,7 +64,7 @@ InModuleScope SimplySql {
         It "Invoke-SqlBulkCopy" {
             Set-SqlConnection -Database "Test"
             Invoke-SqlUpdate -Query "SELECT * INTO tmpTable2 FROM tmpTable WHERE 1=2"
-            Open-SqlConnection -DataSource "(localdb)\MSSQLLocalDB" -ConnectionName bcp 
+            Open-SqlConnection -DataSource "localhost\sqlexpress" -ConnectionName bcp -Credential ([pscredential]::new("test", (ConvertTo-SecureString -Force -AsPlainText "test")))
             Set-SqlConnection -Database test -ConnectionName bcp
             
             Invoke-SqlBulkCopy -DestinationConnectionName bcp -SourceTable tmpTable -DestinationTable tmpTable2 -Notify |
@@ -85,6 +87,7 @@ InModuleScope SimplySql {
         }
 
         It "Transaction: Invoke-SqlUpdate" {
+            Set-SqlConnection -Database "Test"
             Start-SqlTransaction
             { Invoke-SqlUpdate "CREATE TABLE transactionTest (id int)" } | Should -Not -Throw
             Undo-SqlTransaction
@@ -93,7 +96,8 @@ InModuleScope SimplySql {
 
         It "Remove the Test Database" {
             Set-SqlConnection -Database master
-            Invoke-SqlUpdate "drop Database Test" | Should -Be -1
+            Invoke-SqlUpdate "ALTER DATABASE Test SET SINGLE_USER WITH ROLLBACK IMMEDIATE;"
+            Invoke-SqlUpdate "DROP DATABASE Test" | Should -Be -1
         }
     }
 }

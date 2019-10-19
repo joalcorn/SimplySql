@@ -3,7 +3,7 @@
 #>
 InModuleScope SimplySql {
     Describe "MySql" {
-        BeforeEach { Open-MySqlConnection -Database sys -Credential ([pscredential]::new("root", (ConvertTo-SecureString -Force -AsPlainText "password"))) }
+        BeforeEach { Open-MySqlConnection -Database sys -Credential ([pscredential]::new("root", (ConvertTo-SecureString -Force -AsPlainText "root"))) }
         AfterEach { Show-SqlConnection -all | Close-SqlConnection }
         
         It "Test ConnectionString Switch " {

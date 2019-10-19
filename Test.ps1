@@ -19,7 +19,7 @@ Else {
 
     $PSModuleAutoLoadingPreference = "none"
     Import-Module $PSScriptRoot\SimplySql -Force
-    Get-Module SimplySql | Where-Object Path -NotLike "$PSScriptRoot\*" | Remove-Module
+    Get-Module SimplySql | Where-Object Path -NotLike "$PSScriptRoot*" | Remove-Module
     Import-Module Pester -Force
     Write-Host ("Loaded '{0}' of SimplySql!" -f (Get-Module SimplySql).Version.ToString())
 
@@ -27,18 +27,4 @@ Else {
         If($TestName) { Invoke-Pester -Script $PSScriptRoot -TestName $TestName }
         Else { Invoke-Pester -Script $PSScriptRoot }
     }
-    <#Get-Module SimplySql | Format-List
-
-    Get-SqlProviderHelp -Provider SQL
-    Get-SqlProviderHelp -Provider SQLite
-
-    Open-SqlConnection -DataSource it4 -InitialCatalog sandbox 
-
-    Show-SqlConnection
-
-    isq "select @a" -Parameters @{a=1}
-
-    Get-SqlProviderHelp -Provider SQL
-
-    #>
 }
