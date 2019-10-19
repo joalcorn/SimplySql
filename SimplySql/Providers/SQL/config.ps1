@@ -165,7 +165,7 @@ Function Open-SqlConnection {
         , [Parameter(ParameterSetName="user")]
             [Parameter(ParameterSetName="cred")][Switch]$AzureAD
         , [Parameter(Mandatory, ParameterSetName="token")][string]$AzureToken
-        , [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName="Conn")]
+        , [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName="conn")]
             [Parameter(ParameterSetName="token")][string]$ConnectionString)
 
     If($Script:Connections.ContainsKey($ConnectionName)) { Close-SqlConnection $ConnectionName }
