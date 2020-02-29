@@ -1,3 +1,9 @@
+TODO (for PSCore Support)
+
+-- npgsql -- still having issues with Core
+-- mysql, haven't touched!
+
+
 Each Provider will provide its open "Open-*Connection" cmdlet...
     Open-OracleConnection, Open-SqlConnection, Open-SQLiteConnection, Open-PostGreConnection, Open-MySqlConnection
 

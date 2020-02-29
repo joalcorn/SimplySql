@@ -1,6 +1,12 @@
 #Load Up PostGre libraries
-Add-Type -Path "$PSScriptRoot\Npgsql.dll"
-Add-Type -Path "$PSScriptRoot\Npgsql.NetTopologySuite.dll"
+if((Test-Path Variable:\IsCoreCLR) -and $IsCoreCLR) {
+    Add-Type -Path "$PSScriptRoot\Npgsql.dll"
+    Add-Type -Path "$PSScriptRoot\Npgsql.NetTopologySuite.dll"
+}
+else {
+    Add-Type -Path "$PSScriptRoot\NonCore\Npgsql.dll"
+    Add-Type -Path "$PSScriptRoot\NonCore\Npgsql.NetTopologySuite.dll"
+}
 
 #Provider Class
 . "$PSScriptRoot\provider.ps1"
